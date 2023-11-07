@@ -16,7 +16,7 @@ namespaces = true
 
 # PEP 621 https://peps.python.org/pep-0621/
 [project]
-name = "shared-functions"
+name = "graphee-shared-functions"
 version = "0.0.1"
 description = "usefull functions to be shared between multiple graphee projects"
 authors = [{ name = "vincent DI GIUSTO" }, { email = "vincent.digiust@gmail.com" }]
