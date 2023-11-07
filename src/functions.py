@@ -125,7 +125,7 @@ def getUnit(unit_string, lang='eu', regex = True) :
     print('Unit not found: ' + unit_string)
     return None
 
-def webmonitoring_api_request(website_id, country_prefix, validation = False, isMatched = False, auth_data) :
+def webmonitoring_api_request(website_id, country_prefix, auth_data, validation = False, isMatched = False) :
     headers = {'Content-Type': 'application/json'}
     AUTH_URL = 'https://auth-api.graphee.io/oauth/token'
     response = requests.post(AUTH_URL, headers=headers, data=auth_data)
