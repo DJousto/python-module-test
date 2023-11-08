@@ -156,6 +156,66 @@ def webmonitoring_api_request(website_id, country_prefix, auth_data, validation 
         raise Exception('%ERROR% - https://webmonitoring-api.graphee.io/websites response error: ' + response.text)
 
 
+class Price:
+    def __init__(self, value):
+        self.value = value.replace(' ', '')
+        count = len(re.findall(r'\d', self.value))
+        if count > 12:
+            raise Exception(f'Price is too long: {self.value}')
+        elif not count:
+            raise Exception(f'Price not found: {self.value}')
+        points = value.count('.')
+        commas = value.count(',')
+        if (points > 1 and commas > 1) or (points == 1 and commas > 1) or (commas == 1 and points > 1):
+            raise Exception(f'Price is not valid: {self.value}')
+
+    def simple_price(self):
+        return float(re.findall(r'\d+', self.value)[0])
+
+    def comma_price(self):
+        amount = self.value.count(',')
+        if amount == 1:
+            price = re.findall(r'\d+[,]\d+', self.value)[0]
+            digits_count = len(price.split(',')[1])
+            if digits_count > 2:
+                price = price.replace(',', '')
+            else:
+                price = price.replace(',', '.')
+            return float(price)
+        elif amount == 2:
+            price = re.findall(r'\d+[,]\d+[,]\d+', self.value)[0]
+            price_parts = price.split(',')
+            if len(price_parts[1]) > 2 and len(price_parts[2]) == 2:
+                price = price.replace(',', '', 1).replace(',', '.')
+            elif len(price_parts[1]) > 2 and len(price_parts[2]) > 2:
+                price = price.replace(',', '')
+            return float(price)
+
+    def point_price(self):
+        amount = self.value.count('.')
+        if amount == 1:
+            price = re.findall(r'\d+[.]\d+', self.value)[0]
+            digits_count = len(price.split('.')[1])
+            if digits_count > 2:
+                price = price.replace('.', '')
+            return float(price)
+        elif amount == 2:
+            price = re.findall(r'\d+[.]\d+[.]\d+', self.value)[0]
+            price_parts = price.split('.')
+            if len(price_parts[1]) > 2 and len(price_parts[2]) == 2:
+                price = price.replace('.', '', 1)
+            elif len(price_parts[1]) > 2 and len(price_parts[2]) > 2:
+                price = price.replace('.', '')
+            return float(price)
+
+    def comma_point_price(self):
+        result = re.findall(r'\d+[.,]\d+[.,]\d+', self.value)[0]
+        comma_ind = result.find(',')
+        point_ind = result.find('.')
+        if comma_ind < point_ind:
+            return float(result.replace(',', '', 1))
+        else:
+            return float(result.replace('.', '', 1).replace(',', '.'))
 
 def get_price(price_value: str)->float:
     """Parses a string to extract price in float examples:
