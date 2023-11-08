@@ -1,8 +1,11 @@
+"""This module contains usefull functions that can be used for scraping and parsing scraped data"""
+
 import json
 import requests
 import re
 
-def getPackaging(value, country_code) :
+def getPackaging(value:str, country_code:str):
+    """Try to find packaging value from a given string and a given country, returns a string containing most likely packaging value (kg, ml, ....)"""
     country_variations = {
     'pl': {  # Poland
         'Packagings': ['sztuka', 'szt.', 'szt', 'kg', 'g', 'gr' , 'mg', 'l', 'ltr' , 'ml'],
@@ -93,7 +96,8 @@ def getPackaging(value, country_code) :
        return regex_space[0]
     return ''
 
-def getCurrencyIso(country_code) :
+def getCurrencyIso(country_code:str) :
+    """Returns currency of a given country (you have to give iso country code)"""
     currency = 'None'
     currency_dict = {"ke": "KES","ua": "UAH","pl": "PLN","eg": "EGP","no": "NOK","ro": "RON","fr": "EUR","ru": "RUB","us": "USD","in": "INR","cz": "CZK","af": "AFN","la": "LAK","al": "ALL","lv": "LVL","dz": "DZD","lb": "LBP","ad": "EUR","ls": "LSL","ao": "AOA","lr": "LRD","ag": "XCD","ly": "LYD","ar": "ARS","li": "CHF","am": "AMD","lt": "EUR","au": "AUD","lu": "EUR","at": "EUR","mk": "MKD","az": "AZN","mg": "MGA","bs": "BSD","mw": "MWK","bh": "BHD","my": "MYR","bd": "BDT","mv": "MVR","bb": "BBD","ml": "XOF","by": "BYN","mt": "EUR","be": "EUR","mh": "USD","bz": "BZD","mr": "MRU","bj": "XOF","mu": "MUR","bt": "BTN","mx": "MXN","bo": "BOB","fm": "USD","ba": "BAM","md": "MDL","bw": "BWP","mc": "EUR","br": "BRL","mn": "MNT","bn": "BND","ma": "MAD","bg": "BGN","mz": "MZN","bf": "XOF","mm": "MMK","bi": "BIF","na": "NAD","kh": "KHR","nr": "AUD","cm": "XAF","np": "NPR","ca": "CAD","nl": "EUR","cv": "CVE","nz": "NZD","cf": "XAF","ni": "NIO","td": "XAF","ne": "XOF","cl": "CLP","ng": "NGN","cn": "CNY","no": "NOK","co": "COP","om": "OMR","km": "KMF","pk": "PKR","cd": "CDF","pw": "USD","cg": "XAF","pa": "PAB","cr": "CRC","pg": "PGK","ci": "XOF","py": "PYG","hr": "HRK","pe": "PEN","cu": "CUP","ph": "PHP","cy": "EUR","pl": "PLN","cz": "CZK","pt": "EUR","dk": "DKK","qa": "QAR","dj": "DJF","pr": "USD","dm": "XCD","ro": "RON","do": "DOP","ru": "RUB","tl": "USD","rw": "RWF","ec": "USD","kn": "XCD","sv": "USD","lc": "XCD","gq": "XAF","vc": "XCD","er": "ERN","ws": "WST","ee": "EUR","sm": "EUR","et": "ETB","st": "STN","fj": "FJD","sa": "SAR","ga": "XAF","sn": "XOF","gm": "GMD","rs": "RSD","ge": "GEL","sc": "SCR","gh": "GHS","sl": "SLL","gr": "EUR","sb": "SBD","gd": "XCD","so": "SOS","gl": "DKK","za": "ZAR","gt": "GTQ","es": "EUR","gn": "GNF","lk": "LKR","gw": "XOF","sd": "SDG","gy": "GYD","sr": "SRD","ht": "HTG","sz": "SZL","hn": "HNL","se": "SEK","hk": "HKD","ch": "CHF","hu": "HUF","sy": "SYP","is": "ISK","tj": "TJS","tz": "TZS","id": "IDR","tw": "TWD","ir": "IRR","th": "THB","ie": "EUR","tg": "XOF","il": "ILS","to": "TOP","it": "EUR","tt": "TTD","jm": "JMD","tn": "TND","jp": "JPY","tr": "TRY","jo": "JOD","tm": "TMT","kz": "KZT","tv": "TVD","ug": "UGX","ae": "AED","gb": "GBP","kw": "KWD","us": "USD","kg": "KGS","uy": "UYU"}
     try:
@@ -153,8 +157,13 @@ def webmonitoring_api_request(website_id, country_prefix, auth_data, validation 
 
 
 
-def get_price(price_value: str):
-    # check if a given value is a str
+def get_price(price_value: str)->float:
+    """Parses a string to extract price in float examples:
+    1500€     --> 1500.00
+    1 500 £   --> 1500.00
+    1.500,50  --> 1500.50
+    """
+    # check if given value is a str
     if not price_value:
         raise Exception('No value given')
     if not isinstance(price_value, str):
